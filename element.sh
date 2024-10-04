@@ -13,14 +13,14 @@ else
 SQL_QUERY="SELECT * FROM properties JOIN elements USING(atomic_number) WHERE name ILIKE '$ELEMENT_INPUT'"
 fi
 
-ATOMIC_NUMBER=$($PSQL "$SQL_QUERY" 2>&1)
-if [[ -z $ATOMIC_NUMBER || $ATOMIC_NUMBER == *"ERROR:"* ]]
+ELEMENT=$($PSQL "$SQL_QUERY" 2>&1)
+if [[ -z $ELEMENT || $ELEMENT == *"ERROR:"* ]]
 then
   echo "Element with atomic number $ELEMENT_INPUT not found."
     exit 1
 else
 
-echo -e "\n$ATOMIC_NUMBER"
+echo -e "\n$ELEMENT"
 fi
 
 fi
