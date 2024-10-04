@@ -4,13 +4,19 @@ if [ "$#" -eq 0 ]; then
   else
 
 PSQL="psql --username=freecodecamp --dbname=periodic_table -t --no-align --tuples-only -c"
-ELEMENT_NUMBER_1=$1
+ELEMENT_INPUT=$1
+if [[ $ELEMENT_INPUT =~ ^[0-9]+$ ]]; then
+SQL_QUERY="SELECT * FROM properties JOIN elements USING(atomic_number) WHERE atomic_number=$ELEMENT_INPUT"
+elif [[ $ELEMENT_INPUT =~ ^[A-Z][a-z]?$ ]]; then
+SQL_QUERY="SELECT * FROM properties JOIN elements USING(atomic_number) WHERE symbol='$ELEMENT_INPUT'"
+else
+SQL_QUERY="SELECT * FROM properties JOIN elements USING(atomic_number) WHERE name ILIKE '$ELEMENT_INPUT'"
+fi
 
-
-ATOMIC_NUMBER=$($PSQL "SELECT * FROM properties JOIN elements USING(atomic_number) WHERE atomic_number=$ELEMENT_NUMBER_1" 2>&1)
+ATOMIC_NUMBER=$($PSQL "$SQL_QUERY" 2>&1)
 if [[ -z $ATOMIC_NUMBER || $ATOMIC_NUMBER == *"ERROR:"* ]]
 then
-  echo "Element with atomic number $ELEMENT_NUMBER_1 not found."
+  echo "Element with atomic number $ELEMENT_INPUT not found."
     exit 1
 else
 
